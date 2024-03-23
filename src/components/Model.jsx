@@ -6,9 +6,11 @@ import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { animateWithGsapTimeline } from "../utils/animations";
 import { yellowImg } from "../utils";
+
 import { models, sizes } from "../constants";
 
 const Model = () => {
@@ -31,6 +33,25 @@ const Model = () => {
   // rotation value
   const [smallRotation, setSmallRotation] = useState(0);
   const [largeRotation, setLargeRotation] = useState(0);
+
+  const tl = gsap.timeline();
+
+  useEffect(() => {
+    if (size === "large") {
+      animateWithGsapTimeline(tl, small, smallRotation, "#view1", "#view2", {
+        transform: "translateX(-100%)",
+        duration: 2,
+      });
+    }
+
+    if (size === "small") {
+      animateWithGsapTimeline(tl, large, largeRotation, "#view2", "#view1", {
+        transform: "translateX(0)",
+        duration: 2,
+      });    }
+  }, [size]);
+
+
 
   useGSAP(() => {
     gsap.to("#heading", {
@@ -60,7 +81,7 @@ const Model = () => {
             <ModelView
               index={2}
               groupRef={large}
-              gsapType="vies"
+              gsapType="view2"
               controlRef={cameraControlLarge}
               setRotationState={setLargeRotation}
               item={model}
@@ -103,7 +124,8 @@ const Model = () => {
                     key={label}
                     className="size-btn"
                     style={{
-                      backgroundColor: size === value ? "white" : "transparent", color: size === value ? 'black' : 'white'
+                      backgroundColor: size === value ? "white" : "transparent",
+                      color: size === value ? "black" : "white",
                     }}
                     onClick={() => setSize(value)}
                   >
